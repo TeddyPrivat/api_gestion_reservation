@@ -1,4 +1,4 @@
-import authRoutes from "./routes/auth.js";
+import authRoutes from "./src/routes/auth.js";
 // Etape 1: Importer les dépendances
 const express = require("express");
 
