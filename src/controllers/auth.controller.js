@@ -16,12 +16,11 @@ export const register = async (req, res) => {
     if (existing) return res.status(400).json({ error: "User already exists" });
 
     const hashedPassword = await bcrypt.hash(validatedData.password, 10);
-
     const user = await prisma.user.create({
       data: {
         email: validatedData.email,
         password: hashedPassword,
-        name: validatedData.name,
+        role: validatedData.role,
       },
     });
 
@@ -43,7 +42,7 @@ export const login = async (req, res) => {
     if (!isValid) return res.status(403).json({ error: "Invalid credentials" });
 
     const token = jwt.sign(
-      { userId: user.id, email: user.email },
+      { userId: user.id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
