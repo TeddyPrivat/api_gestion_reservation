@@ -1,0 +1,19 @@
+# Spécifie la version de la syntaxe Docker Compose
+version: '3.8'
+
+# Définit les services (conteneurs) à lancer
+services:
+  # Le nom de notre service principal
+  app:
+    # Construit l'image en utilisant le Dockerfile dans le répertoire courant (.)
+    build: .
+    # Mappe le port 3000 du conteneur au port 3000 de votre machine
+    ports:
+      - "3000:3000"
+    # Monte le répertoire courant (votre projet sur votre machine)
+    # dans le répertoire /usr/src/app du conteneur.
+    # Cela permet de voir les modifications de code en direct sans avoir à reconstruire l'image.
+    volumes:
+      - .:/usr/src/app
+      # Exclut node_modules pour utiliser celui installé dans le conteneur
+      - /usr/src/app/node_modules
