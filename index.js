@@ -1,3 +1,4 @@
+import authRoutes from "./routes/auth.js";
 // Etape 1: Importer les dépendances
 const express = require("express");
 
@@ -45,6 +46,7 @@ app.post("/rooms", async (req, res) => {
   }
 });
 
+app.use("/auth", authRoutes);
 // Etape 6: Démarrer le serveur
 app.listen(port, () => {
   console.log(`Serveur démarré et à l'écoute sur http://localhost:${port}`);

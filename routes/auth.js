@@ -1,32 +1,15 @@
-import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import { registerSchema } from "../zodSchemas/userSchema.js";
+import express from "express";
+import { register, login } from "../controllers/auth.controller.js";
+import { authenticateToken } from "../middlewares/auth.middleware.js";
 
-const prisma = new PrismaClient();
+const router = express.Router();
 
-export const register = async (req, res) => {
-  try {
-    const validatedData = registerSchema.parse(req.body);
+router.post("/register", register);
+router.post("/login", login);
 
-    const existing = await prisma.user.findUnique({
-      where: { email: validatedData.email },
-    });
+// Exemple de route protégée
+router.get("/me", authenticateToken, (req, res) => {
+  res.json({ user: req.user });
+});
 
-    if (existing) return res.status(400).json({ error: "User already exists" });
-
-    const hashedPassword = await bcrypt.hash(validatedData.password, 10);
-
-    const user = await prisma.user.create({
-      data: {
-        email: validatedData.email,
-        password: hashedPassword,
-        name: validatedData.name,
-      },
-    });
-
-    res.status(201).json({ message: "User created", user: { id: user.id, email: user.email } });
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-};
+export default router;
