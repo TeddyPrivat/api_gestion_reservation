@@ -1,0 +1,13 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+# Editor-based HTTP Client requests
+/httpRequests/
+# Datasource local storage ignored files
+/dataSources/
+/dataSources.local.xml
+# Dossier des dépendances Node
+node_modules
+
+# Fichier des variables d'environnement (contient des secrets)
+.env
