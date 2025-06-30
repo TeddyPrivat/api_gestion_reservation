@@ -1,20 +1,13 @@
 import authRoutes from "./src/routes/auth.routes.js";
-// Etape 1: Importer les dépendances
-const express = require("express");
+import express from "express";
+import { PrismaClient } from "@prisma/client";
 
-// Attention: le chemin d'import pour PrismaClient dépend de votre configuration.
-// D'après votre schéma, il devrait être celui-ci.
-const { PrismaClient } = require("@prisma/client");
-
-// Etape 2: Initialiser Express et Prisma
 const app = express();
 const prisma = new PrismaClient();
 const port = 3000;
 
-// Etape 3: Middleware pour permettre à Express de lire le JSON des requêtes
 app.use(express.json());
 
-// Etape 4: Définir une première route "test"
 app.get("/", (req, res) => {
   res.send("Hello World! Mon API fonctionne dans Docker !");
 });
