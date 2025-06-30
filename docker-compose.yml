@@ -1,19 +1,46 @@
-# Spécifie la version de la syntaxe Docker Compose
-version: '3.8'
-
-# Définit les services (conteneurs) à lancer
 services:
-  # Le nom de notre service principal
+  # Service de votre application Node.js
   app:
-    # Construit l'image en utilisant le Dockerfile dans le répertoire courant (.)
     build: .
-    # Mappe le port 3000 du conteneur au port 3000 de votre machine
     ports:
       - "3000:3000"
-    # Monte le répertoire courant (votre projet sur votre machine)
-    # dans le répertoire /usr/src/app du conteneur.
-    # Cela permet de voir les modifications de code en direct sans avoir à reconstruire l'image.
     volumes:
       - .:/usr/src/app
-      # Exclut node_modules pour utiliser celui installé dans le conteneur
       - /usr/src/app/node_modules
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "postgresql://user:password@db:5432/mydatabase"
+
+  # Service pour la base de données PostgreSQL
+  db:
+    image: postgres:15 # CHANGEMENT ICI: On utilise l'image standard
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydatabase
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d mydatabase"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # NOUVEAU: Service pour l'interface de gestion Adminer
+  adminer:
+    image: adminer # Image officielle d'Adminer
+    restart: always
+    ports:
+      # On expose l'interface d'Adminer sur le port 8080 de notre machine
+      - "8080:8080"
+    depends_on:
+      # Adminer ne démarrera que si la base de données est prête
+      - db
+
+volumes:
+  postgres_data: # Correction de la petite erreur de syntaxe ici
